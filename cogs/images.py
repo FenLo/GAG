@@ -1,5 +1,5 @@
 import discord
-import requests
+import aiohttp
 from PIL import Image, ImageDraw, ImageFont
 import io
 import os
@@ -14,8 +14,24 @@ async def alıntıolustur(interaction: discord.Interaction, member: discord.Memb
     times_new_roman_regular = os.path.join(font_dir, "Times New Roman.ttf")  # Regular versiyonu
     
     avatar_url = member.display_avatar.url
-    response = requests.get(avatar_url, stream=True)
-    avatar = Image.open(io.BytesIO(response.content)).convert("RGB")
+    
+    # Download avatar with async HTTP
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(avatar_url, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                if response.status == 200:
+                    avatar_data = await response.read()
+                    avatar = Image.open(io.BytesIO(avatar_data)).convert("RGB")
+                else:
+                    await interaction.followup.send("❌ Avatar yüklenirken bir hata oluştu.", ephemeral=True)
+                    return
+    except aiohttp.ClientError:
+        await interaction.followup.send("❌ Avatar indirilemedi. Lütfen daha sonra tekrar deneyin.", ephemeral=True)
+        return
+    except Exception as e:
+        await interaction.followup.send("❌ Avatar işlenirken bir hata oluştu.", ephemeral=True)
+        return
+    
     avatar = avatar.convert("L").convert("RGB")
     
     img_width, img_height = 1200, 630
@@ -46,9 +62,14 @@ async def alıntıolustur(interaction: discord.Interaction, member: discord.Memb
     # Font yükleme (Times New Roman ile)
     try:
         # Önce Times New Roman fontlarını deneyelim
+        if not os.path.exists(times_new_roman_bold):
+            raise FileNotFoundError(f"Font dosyası bulunamadı: {times_new_roman_bold}")
         font_quote = ImageFont.truetype(times_new_roman_bold, 52)
         font_author = ImageFont.truetype(times_new_roman_italic, 32)
         font_custom = ImageFont.truetype(times_new_roman_regular, 27)
+    except FileNotFoundError as e:
+        await interaction.followup.send(f"❌ Font dosyası bulunamadı. Lütfen 'config/font' klasörünü kontrol edin.", ephemeral=True)
+        return
     except Exception as e:
         print(f"Font yükleme hatası: {e}")
         try:
@@ -64,9 +85,8 @@ async def alıntıolustur(interaction: discord.Interaction, member: discord.Memb
                 font_custom = ImageFont.truetype("DejaVuSans.ttf", 27)
             except:
                 # Son çare
-                font_quote = ImageFont.load_default()
-                font_author = ImageFont.load_default()
-                font_custom = ImageFont.load_default()
+                await interaction.followup.send("❌ Uygun font bulunamadı. Lütfen font dosyalarını kontrol edin.", ephemeral=True)
+                return
     
     def draw_text_with_shadow(draw, position, text, font, text_color, shadow_color=(0,0,0), shadow_offset=(3,3)):
         x, y = position

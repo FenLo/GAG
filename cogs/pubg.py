@@ -1,5 +1,5 @@
 import os
-import requests
+import aiohttp
 from datetime import datetime, timezone, timedelta
 import openpyxl
 from openpyxl import Workbook
@@ -28,13 +28,22 @@ async def check_and_post_match(bot):
     }
 
     url = f"https://api.pubg.com/shards/{PLATFORM}/players?filter[playerNames]={PLAYER_NAME}"
-    response = requests.get(url, headers=headers)
+    
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                if response.status != 200:
+                    print("❌ API hatası veya oyuncu bulunamadı.")
+                    return
 
-    if response.status_code != 200:
-        print("❌ API hatası veya oyuncu bulunamadı.")
+                data = await response.json()
+    except aiohttp.ClientError:
+        print("❌ PUBG API'sine ulaşılamadı.")
+        return
+    except Exception as e:
+        print(f"❌ Bir hata oluştu: {e}")
         return
 
-    data = response.json()
     if not data["data"]:
         print("❌ Oyuncu verisi bulunamadı.")
         return
@@ -47,19 +56,23 @@ async def check_and_post_match(bot):
         return
 
     match_id = None
-    for match in matches:
-        match_url = f"https://api.pubg.com/shards/{PLATFORM}/matches/{match['id']}"
-        match_response = requests.get(match_url, headers=headers)
+    async with aiohttp.ClientSession() as session:
+        for match in matches:
+            match_url = f"https://api.pubg.com/shards/{PLATFORM}/matches/{match['id']}"
+            try:
+                async with session.get(match_url, headers=headers, timeout=aiohttp.ClientTimeout(total=10)) as match_response:
+                    if match_response.status != 200:
+                        print(f"❌ Maç {match['id']} verisi alınamadı.")
+                        continue
 
-        if match_response.status_code != 200:
-            print(f"❌ Maç {match['id']} verisi alınamadı.")
-            continue
+                    match_data = await match_response.json()
 
-        match_data = match_response.json()
-
-        if match_data["data"]["attributes"]["gameMode"] == "squad-fpp":
-            match_id = match["id"]
-            break
+                    if match_data["data"]["attributes"]["gameMode"] == "squad-fpp":
+                        match_id = match["id"]
+                        break
+            except aiohttp.ClientError:
+                print(f"❌ Maç {match['id']} için bağlantı hatası.")
+                continue
 
     if match_id is None:
         print("❌ FPP Squad maçı bulunamadı.")
@@ -73,13 +86,21 @@ async def check_and_post_match(bot):
     print(f"\033[91mYeni maç Bulundu!\033[91m")
 
     match_url = f"https://api.pubg.com/shards/{PLATFORM}/matches/{match_id}"
-    match_response = requests.get(match_url, headers=headers)
+    
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(match_url, headers=headers, timeout=aiohttp.ClientTimeout(total=10)) as match_response:
+                if match_response.status != 200:
+                    print("❌ Maç bilgileri alınamadı.")
+                    return
 
-    if match_response.status_code != 200:
-        print("❌ Maç bilgileri alınamadı.")
+                match_data = await match_response.json()
+    except aiohttp.ClientError:
+        print("❌ Maç bilgilerine ulaşılamadı.")
         return
-
-    match_data = match_response.json()
+    except Exception as e:
+        print(f"❌ Bir hata oluştu: {e}")
+        return
     participants = [p for p in match_data["included"] if p["type"] == "participant"]
     teams = [t for t in match_data["included"] if t["type"] == "roster"]
 

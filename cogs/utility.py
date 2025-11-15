@@ -1,6 +1,6 @@
 import discord
 import os
-import requests
+import aiohttp
 
 async def weather(interaction: discord.Interaction, city: str, days: int):
     await interaction.response.defer()
@@ -9,6 +9,12 @@ async def weather(interaction: discord.Interaction, city: str, days: int):
         return
 
     WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+    
+    # Check if API key is missing or empty
+    if not WEATHER_API_KEY:
+        await interaction.followup.send("❌ Hava durumu API anahtarı yapılandırılmamış.", ephemeral=True)
+        return
+    
     BASE_URL = "https://api.tomorrow.io/v4/weather/forecast"
     
     params = {
@@ -18,13 +24,21 @@ async def weather(interaction: discord.Interaction, city: str, days: int):
         "units": "metric"
     }
 
-    response = requests.get(BASE_URL, params=params)
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(BASE_URL, params=params, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                if response.status != 200:
+                    await interaction.followup.send("❌ Hava durumu bilgisi alınamadı, lütfen şehri kontrol edin.", ephemeral=True)
+                    return
 
-    if response.status_code != 200:
-        await interaction.followup.send("❌ Hava durumu bilgisi alınamadı, lütfen şehri kontrol edin.", ephemeral=True)
+                data = await response.json()
+    except aiohttp.ClientError:
+        await interaction.followup.send("❌ Hava durumu API'sine ulaşılamadı.", ephemeral=True)
+        return
+    except Exception:
+        await interaction.followup.send("❌ Bir hata oluştu, lütfen daha sonra tekrar deneyin.", ephemeral=True)
         return
 
-    data = response.json()
     forecasts = data.get("timelines", {}).get("daily", [])
 
     if not forecasts:

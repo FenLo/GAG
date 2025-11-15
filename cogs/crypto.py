@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 from discord import app_commands
-import requests
+import aiohttp
 import asyncio
 from datetime import datetime
 import sqlite3
@@ -76,8 +76,16 @@ class CryptoCog(commands.Cog):
             f"&ids={','.join(CRYPTO_IDS)}&order=market_cap_desc&per_page=12&page=1&sparkline=false"
         )
         try:
-            response = requests.get(url, timeout=10)
-            data = response.json()
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                    else:
+                        print(f"CoinGecko API hatası: HTTP {response.status}")
+                        return
+        except aiohttp.ClientError as e:
+            print(f"CoinGecko API bağlantı hatası: {e}")
+            return
         except Exception as e:
             print(f"CoinGecko API hatası: {e}")
             return
