@@ -38,3 +38,4 @@ colorama>=0.4.6
 
 # PUBG API (if using official API)
 pubg-python>=0.5.0
+openpyxl>=3.0.0
