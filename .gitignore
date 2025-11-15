@@ -1,4 +1,11 @@
-# Python
+# Node.js / JavaScript
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (legacy)
 __pycache__/
 *.py[cod]
 *$py.class
@@ -23,11 +30,23 @@ Thumbs.db
 
 # Environment variables
 .env
+config/.env
 
 # Databases
 *.db
 *.sqlite
 *.sqlite3
+*.db-journal
 
 # Logs
 *.log
+logs/
+
+# Build output
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
+*.tmp

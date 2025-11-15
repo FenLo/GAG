@@ -1,9 +1,9 @@
 # GAG Discord Bot
 
-A feature-rich Discord bot built with Python, offering moderation tools, entertainment features, gaming integration, and utility commands.
+A feature-rich Discord bot built with JavaScript/Node.js, offering moderation tools, entertainment features, gaming integration, and utility commands.
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![discord.py](https://img.shields.io/badge/discord.py-2.0+-blue.svg)](https://github.com/Rapptz/discord.py)
+[![Node.js](https://img.shields.io/badge/Node.js-18.0+-green.svg)](https://nodejs.org/)
+[![discord.js](https://img.shields.io/badge/discord.js-14.14+-blue.svg)](https://discord.js.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
 
 ## Features
@@ -98,32 +98,39 @@ A feature-rich Discord bot built with Python, offering moderation tools, enterta
 
 ## Technology Stack
 
-- **Language**: Python 3.8+
-- **Library**: discord.py 2.0+
-- **Database**: SQLite (via cogs.database)
-- **Environment**: python-dotenv for configuration
+- **Language**: JavaScript (Node.js 18+)
+- **Library**: discord.js 14.14+
+- **Database**: SQLite3 (via better-sqlite3)
+- **Environment**: dotenv for configuration
+- **Image Processing**: Canvas for quote generation
+- **APIs**: axios for HTTP requests
 
 ## Bot Structure
 
 ```
 GAG/
-├── bot.py                 # Main bot file
-├── start.bat             # Windows startup script
-├── cogs/                 # Feature modules
-│   ├── database.py       # Database management
-│   ├── moderation.py     # Moderation commands
-│   ├── pubg.py          # PUBG integration
-│   ├── fun.py           # Entertainment commands
-│   ├── utility.py       # Utility commands
-│   ├── images.py        # Image generation
-│   ├── drawgame.py      # Drawing game
-│   ├── crypto.py        # Cryptocurrency tracking
-│   ├── news_rss.py      # RSS news feed
-│   ├── music.py         # Music playback
-│   └── birthday.py      # Birthday tracking and announcements
-├── config/              # Configuration files
-│   └── .env            # Environment variables
-└── yazıtura/           # Coin flip assets
+├── bot.js                # Main bot file
+├── package.json          # Node.js dependencies
+├── start.js              # Startup script
+├── src/                  # Source files
+│   ├── commands/         # Slash command files
+│   │   ├── help.js       # Help command
+│   │   ├── timeout.js    # Moderation commands
+│   │   ├── weather.js    # Utility commands
+│   │   ├── gayrate.js    # Fun commands
+│   │   ├── birthday.js   # Birthday tracking
+│   │   ├── play.js       # Music commands
+│   │   └── ...           # Other commands
+│   ├── events/           # Event handlers
+│   │   ├── ready.js      # Bot ready event
+│   │   └── guildMemberAdd.js # Auto-role event
+│   ├── database.js       # Database management
+│   └── utils/            # Utility functions
+├── config/               # Configuration files
+│   ├── .env              # Environment variables
+│   ├── .env.example      # Environment template
+│   └── database/         # SQLite databases
+└── yazıtura/             # Coin flip assets
 ```
 
 ## Getting Started
