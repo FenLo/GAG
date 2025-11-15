@@ -1,0 +1,40 @@
+# Core Discord Bot Framework
+discord.py>=2.3.2
+python-dotenv>=1.0.0
+
+# Async and HTTP
+aiohttp>=3.9.0
+asyncio>=3.4.3
+
+# Database
+aiosqlite>=0.19.0
+
+# Music Playback
+yt-dlp>=2023.11.16
+PyNaCl>=1.5.0
+ffmpeg-python>=0.2.0
+
+# Image Processing
+Pillow>=10.1.0
+
+# Weather API
+python-weather>=1.0.0
+
+# Cryptocurrency
+cryptocompare>=0.7.6
+
+# RSS Feed Parsing
+feedparser>=6.0.10
+
+# Web Scraping and API Requests
+requests>=2.31.0
+beautifulsoup4>=4.12.2
+
+# Date and Time Handling
+python-dateutil>=2.8.2
+
+# Logging and Utilities
+colorama>=0.4.6
+
+# PUBG API (if using official API)
+pubg-python>=0.5.0
