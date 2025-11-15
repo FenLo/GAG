@@ -1,12 +1,13 @@
 # Installation Guide
 
-This guide will walk you through the process of setting up and running the GAG Discord Bot.
+This guide will walk you through the process of setting up and running the GAG Discord Bot (JavaScript/Node.js version).
 
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
 
-- **Python 3.8 or higher** - [Download Python](https://www.python.org/downloads/)
+- **Node.js 18.0 or higher** - [Download Node.js](https://nodejs.org/)
+- **npm** (comes with Node.js) or **yarn**
 - **Git** (optional, for cloning) - [Download Git](https://git-scm.com/downloads/)
 - **Discord Account** - To create a bot application
 
@@ -23,30 +24,29 @@ cd GAG
 2. Extract the ZIP file to your desired location
 3. Open a terminal/command prompt in the extracted folder
 
-## Step 2: Install Python Dependencies
+## Step 2: Install Node.js Dependencies
 
-### Windows
+### All Platforms
 ```bash
-pip install -r requirements.txt
+npm install
 ```
 
-### Linux/macOS
+Or if you prefer yarn:
 ```bash
-pip3 install -r requirements.txt
+yarn install
 ```
 
 ### Required Packages
-If `requirements.txt` doesn't exist, install these manually:
-```bash
-pip install discord.py python-dotenv aiohttp asyncio
-```
-
-Additional dependencies for specific features:
-- Weather: `pip install python-weather`
-- Crypto: `pip install cryptocompare`
-- RSS News: `pip install feedparser`
-- Music: `pip install yt-dlp PyNaCl`
-- Image processing: `pip install Pillow`
+The following packages will be installed automatically from `package.json`:
+- `discord.js` - Discord API wrapper
+- `dotenv` - Environment variable management
+- `sqlite3` - Database
+- `axios` - HTTP requests
+- `canvas` - Image generation
+- `node-cron` - Scheduled tasks
+- `feedparser` - RSS parsing
+- `@discordjs/voice` - Voice/music support
+- `ytdl-core` / `play-dl` - YouTube playback
 
 ## Step 3: Create a Discord Bot Application
 
@@ -106,21 +106,26 @@ DISCORD_TOKEN=
 
 ## Step 6: Run the Bot
 
-### Windows
+### All Platforms
 
-#### Option A: Using the batch file
+#### Option A: Using npm
 ```bash
-start.bat
+npm start
 ```
 
-#### Option B: Using Python directly
+#### Option B: Using Node directly
 ```bash
-python bot.py
+node bot.js
 ```
 
-### Linux/macOS
+#### Option C: Using the start script
 ```bash
-python3 bot.py
+node start.js
+```
+
+### Development Mode (with auto-restart)
+```bash
+npm run dev
 ```
 
 ## Step 7: Verify Installation
@@ -164,8 +169,8 @@ Configure these features based on your needs:
 
 ### Bot doesn't start
 - Verify your token in `config/.env` is correct
-- Ensure all required packages are installed
-- Check Python version: `python --version` (must be 3.8+)
+- Ensure all required packages are installed: `npm install`
+- Check Node.js version: `node --version` (must be 18.0+)
 
 ### Commands don't appear
 - Wait a few minutes for Discord to sync slash commands
@@ -183,7 +188,18 @@ Configure these features based on your needs:
 
 ### Module not found errors
 ```bash
-pip install --upgrade -r requirements.txt
+npm install
+```
+
+### Canvas/image generation errors
+On Linux, you may need to install additional dependencies:
+```bash
+sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+```
+
+On macOS:
+```bash
+brew install pkg-config cairo pango libpng jpeg giflib librsvg
 ```
 
 ## Updating the Bot
@@ -192,22 +208,30 @@ To update to the latest version:
 
 ```bash
 git pull origin main
-pip install -r requirements.txt --upgrade
-python bot.py
+npm install
+node bot.js
 ```
 
 ## Running the Bot 24/7
 
 For continuous operation, consider:
-- **Windows**: Use Task Scheduler or run as a Windows Service
-- **Linux**: Use systemd, screen, or tmux
-- **Cloud Hosting**: Deploy on platforms like Heroku, Railway, or AWS
+- **Windows**: Use Task Scheduler or PM2
+- **Linux**: Use systemd, PM2, screen, or tmux
+- **Cloud Hosting**: Deploy on platforms like Heroku, Railway, Render, or AWS
 - **VPS**: Rent a Virtual Private Server for dedicated hosting
+
+### Using PM2 (Recommended for production)
+```bash
+npm install -g pm2
+pm2 start bot.js --name gag-bot
+pm2 save
+pm2 startup
+```
 
 ### Example: Using screen on Linux
 ```bash
 screen -S gag-bot
-python3 bot.py
+node bot.js
 # Press Ctrl+A then D to detach
 # Use 'screen -r gag-bot' to reattach
 ```

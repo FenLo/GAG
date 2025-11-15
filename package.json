@@ -1,0 +1,40 @@
+{
+  "name": "gag-discord-bot",
+  "version": "1.0.0",
+  "description": "A feature-rich Discord bot built with Node.js, offering moderation tools, entertainment features, gaming integration, and utility commands.",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "nodemon bot.js"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discord-bot",
+    "moderation",
+    "gaming",
+    "entertainment"
+  ],
+  "author": "FenLo",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "sqlite3": "^5.1.6",
+    "axios": "^1.6.2",
+    "canvas": "^2.11.2",
+    "node-cron": "^3.0.3",
+    "feedparser": "^2.2.10",
+    "@discordjs/voice": "^0.16.1",
+    "@discordjs/opus": "^0.9.0",
+    "ytdl-core": "^4.11.5",
+    "play-dl": "^1.9.7",
+    "sodium-native": "^4.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
