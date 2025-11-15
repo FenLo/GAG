@@ -75,7 +75,7 @@ Replace `your_bot_token_here` with the token you copied in Step 3.
 
 ### Example `.env` file:
 ```env
-DISCORD_TOKEN=MTIzNDU2Nzg5MDEyMzQ1Njc4OQ.GhIjKl.MnOpQrStUvWxYzAbCdEfGhIjKlMnOpQrStUv
+DISCORD_TOKEN=
 ```
 
 ## Step 5: Invite the Bot to Your Server
